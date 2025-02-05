@@ -7,8 +7,8 @@
     s.summary = 'Documatic is a template-driven formatter that can be used to produce attractive printable OpenDocument documents such as reports, invoices, letters, faxes and more.'
     s.description = s.summary
     s.author = %q{"urbanus" "Antonio Liccardo" "Zachris Trolin"}
-    #s.email = 'urbanus@240gl.org'
-    s.email = Base64.decode64("dHV4bWFsQHRpc2NhbGkuaXQK\n")
+    # s.email = 'urbanus@240gl.org'
+    # s.email = Base64.decode64("dHV4bWFsQHRpc2NhbGkuaXQK\n")
     s.required_ruby_version     = '>= 2.0.0'
     s.required_rubygems_version = '>= 1.3.6'
     s.date              = %q{2019-04-06}
