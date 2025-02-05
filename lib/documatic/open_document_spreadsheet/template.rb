@@ -8,7 +8,7 @@ require 'fileutils'
 module Documatic::OpenDocumentSpreadsheet
   class Template
     include ERB::Util
-    
+
     attr_accessor :content
     attr_accessor :styles
     attr_accessor :jar
@@ -20,7 +20,7 @@ module Documatic::OpenDocumentSpreadsheet
     # RE_STYLES match positions
     STYLE_NAME = 1
     STYLE_TYPE = 2
-    
+
     # RE_ERB match positions
     ROW_START  = 1
     TYPE       = 2
@@ -29,7 +29,7 @@ module Documatic::OpenDocumentSpreadsheet
 
     # Abbrevs
     DSC = Documatic::OpenDocumentSpreadsheet::Component
-    
+
     class << self
 
       def process_template(args, &block)
@@ -51,15 +51,15 @@ module Documatic::OpenDocumentSpreadsheet
           'Need to specify both :template_file and :output_file in options'
         end
       end
-            
+
     end  # class << self
-    
+
     def initialize(filename)
       @filename = filename
       @jar = Zip::File.open(@filename)
       return true
     end
-    
+
     def process(local_assigns = {})
       # Compile this template, if not compiled already.
       self.jar.find_entry('documatic/master') || self.compile
@@ -83,7 +83,7 @@ module Documatic::OpenDocumentSpreadsheet
       # Now we can safely close our document.
       self.jar.close
     end
-    
+
     def compile
       # Read the raw files
       @content_raw = regularise_styles( self.jar.read('content.xml') )
@@ -92,7 +92,7 @@ module Documatic::OpenDocumentSpreadsheet
       # Create 'documatic/master/' in zip file
       self.jar.find_entry('documatic/master') ||
       self.jar.mkdir('documatic/master')
-      
+
       self.jar.get_output_stream('documatic/master/content.erb') do |f|
         f.write @content_erb
       end
@@ -117,7 +117,7 @@ module Documatic::OpenDocumentSpreadsheet
       styles = {'Ruby_20_Code' => 'Code', 'Ruby_20_Value' => 'Value',
         'Ruby_20_Literal' => 'Literal'}
       re_styles = /<style:style style:name="([^"]+)" style:parent-style-name="Ruby_20_(Code|Value|Literal)" style:family="table-cell">/
-      
+
       while remaining.length > 0
         md = re_styles.match remaining
         if md
@@ -127,13 +127,13 @@ module Documatic::OpenDocumentSpreadsheet
           remaining = ""
         end
       end
-      
+
       remaining = code
       result = String.new
-      
+
       # Then make a RE that includes the ERb-related styles.
       # Match positions:
-      # 
+      #
       #  1. ROW_START   Begin table row ?
       #  2. TYPE        ERb text style type
       #  3. ERB_CODE    ERb code
@@ -146,11 +146,11 @@ module Documatic::OpenDocumentSpreadsheet
       while remaining.length > 0
 
         md = re_erb.match remaining
-        
+
         if md
-          
+
           result += md.pre_match
-          
+
           #match_code = false
           #match_row  = false
 
@@ -161,20 +161,20 @@ module Documatic::OpenDocumentSpreadsheet
           skip_row=false
           #create cells, but dont append
           cells= case styles[md[TYPE]]
-                 when "Code" then 
+                 when "Code" then
                    skip_row=true
                    "<% #{self.unnormalize md[ERB_CODE]} %>"
                  when "Literal" then "<%= #{self.unnormalize md[ERB_CODE]} %>"
                  when "Value" then  "<%=cell (#{self.unnormalize md[ERB_CODE] }) %>" #let helper build the correct "cell"
                  end
-          
+
           #fist see if we should open row tag
 		  #
-		  #N.B - this assumes that there should be NO CELL VALUS after this one on the same row (will create invalid document)... 
+		  #N.B - this assumes that there should be NO CELL VALUS after this one on the same row (will create invalid document)...
           if md[ROW_START] and not skip_row
             result+= md[ROW_START]
           end
-          
+
           #then cell body
           result+=cells
 
@@ -182,15 +182,15 @@ module Documatic::OpenDocumentSpreadsheet
           if md[ROW_END] and not skip_row
            result += md[ROW_END]
           end
-          
+
           remaining = md.post_match
-          
+
         else  # no further matches
           result += remaining
           remaining = ""
         end
       end
-      
+
       return result
     end
 
@@ -232,7 +232,7 @@ module Documatic::OpenDocumentSpreadsheet
           # The cells are both <table:table-cell> and
           # <table:covered-table-cell>
           cells = doc.root.elements.to_a(<<-END
-//table:table[#{tnum}]/table:table-row[#{rnum}]/(table:table-cell | table:covered-table-cell)
+//table:table[#{tnum}]/table:table-row[#{rnum}]/table:table-cell | table:covered-table-cell
 END
                                          )
           # Keep track of the column number, for formatting purposes
@@ -254,6 +254,6 @@ END
 
       return doc.to_s
     end
-    
+
   end
 end
