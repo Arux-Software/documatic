@@ -220,6 +220,8 @@ module Documatic::OpenDocumentText
       styles = {'Ruby_20_Code' => '', 'Ruby_20_Value' => '= ERB::Util.h(',
         'Ruby_20_Block' => '=', 'Ruby_20_Literal' => '='}
 
+      binding.pry
+
       xml_doc = REXML::Document.new(self.jar.read(filename))
       styles.each_pair do |key, val|
         xpath="//*[@text:style-name=\"#{key}\"]"
