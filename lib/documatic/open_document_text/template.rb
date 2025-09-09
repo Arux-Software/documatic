@@ -265,6 +265,7 @@ module Documatic::OpenDocumentText
       xml_doc.write(rexml_text, -1, true)
       rexml_text.gsub!('&lt;&amp;perc;', '<%')
       rexml_text.gsub!('&amp;perc;&gt;', '%>')
+      rexml_text.gsub!('&apos;', "'")
       return rexml_text
     end
 
