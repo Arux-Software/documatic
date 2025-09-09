@@ -265,6 +265,7 @@ module Documatic::OpenDocumentText
       rexml_text.gsub!('<&perc;', '<%')       # CDATA start
       rexml_text.gsub!('&amp;perc;&gt;', '%>') # legacy escaped end
       rexml_text.gsub!('&perc;>', '%>')       # CDATA end
+      rexml_text.gsub!(/<%=?\s*%>/, "")  # remove any leftover empty tags
       return rexml_text
     end
 
