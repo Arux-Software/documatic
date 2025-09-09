@@ -220,6 +220,8 @@ module Documatic::OpenDocumentText
       styles = {'Ruby_20_Code' => '', 'Ruby_20_Value' => '= ERB::Util.h(',
         'Ruby_20_Block' => '=', 'Ruby_20_Literal' => '='}
 
+      binding.pry
+
       xml_doc = REXML::Document.new(self.jar.read(filename))
       styles.each_pair do |key, val|
         xpath="//*[@text:style-name=\"#{key}\"]"
@@ -254,18 +256,15 @@ module Documatic::OpenDocumentText
           class_names = (el_style + el_class).join(' ')
           #new_el.add_attribute('text:class-names', class_names) if class_names != ''
           new_el.add_attribute('text:style-name', class_names) if class_names != ''
-          new_el.add(REXML::CData.new(erb_text))
+          new_el.text=(erb_text)
           el.replace_with(new_el)
           #el.replace_with(REXML::Text.new(erb_text))
         end
       end
       rexml_text=''
       xml_doc.write(rexml_text, -1, true)
-      rexml_text.gsub!('&lt;&amp;perc;', '<%')  # legacy escaped start
-      rexml_text.gsub!('<&perc;', '<%')       # CDATA start
-      rexml_text.gsub!('&amp;perc;&gt;', '%>') # legacy escaped end
-      rexml_text.gsub!('&perc;>', '%>')       # CDATA end
-      rexml_text.gsub!(/<%=?\s*%>/, "")  # remove any leftover empty tags
+      rexml_text.gsub!('&lt;&amp;perc;', '<%')
+      rexml_text.gsub!('&amp;perc;&gt;', '%>')
       return rexml_text
     end
 
