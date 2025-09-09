@@ -47,7 +47,7 @@ module Documatic::OpenDocumentText
       # can peform manipulation of the template directly by
       # e.g. accessing the template's JAR or the content or styles
       # components.  The template will be saved after the block exits.
-      def process_template(args, &block)       
+      def process_template(args, &block)
         if args[:options] && args[:options].template_file &&
             args[:options].output_file
           output_dir = File.dirname(args[:options].output_file)
@@ -66,15 +66,15 @@ module Documatic::OpenDocumentText
           raise ArgumentError, 'Need to specify both :template_file and :output_file in options'
         end
       end
-            
+
     end  # class << self
-    
+
     def initialize(filename)
       @filename = filename
       @jar = Zip::File.open(@filename)
       return true
     end
-    
+
     def process(local_assigns = {})
       # Compile this template, if not compiled already.
       self.jar.find_entry('documatic/master') || self.compile
@@ -129,7 +129,7 @@ module Documatic::OpenDocumentText
 
       # Create 'documatic/master/' in zip file
       self.jar.find_entry('documatic/master') || self.jar.mkdir('documatic/master')
-      
+
       self.jar.get_output_stream('documatic/master/content.erb') do |f|
         f.write @content_erb
       end
@@ -145,8 +145,8 @@ module Documatic::OpenDocumentText
     # template.)
     def images
       @images ||= Hash.new
-    end        
-    
+    end
+
     # Add an image to the current template.  The argument is the
     # path and filename of the image to be added to the template.
     # This can be an absolute path or a relative path to the current
@@ -169,8 +169,8 @@ module Documatic::OpenDocumentText
     def add_partial(full_path, partial)
       self.partials[full_path] = partial
     end
-    
-    
+
+
     protected
 
     def pretty_xml(filename)
@@ -180,11 +180,11 @@ module Documatic::OpenDocumentText
       xml_doc.write(xml_text, -1)
       return xml_text
     end
-    
-    # Change OpenDocument line breaks, tabs and spaces 
+
+    # Change OpenDocument line breaks, tabs and spaces
     # in the ERb code to regular characters.
     def unnormalize(element)
-      case element.name 
+      case element.name
       when 'line-break'
         text = "\n"
       when 'tab'
@@ -204,15 +204,15 @@ module Documatic::OpenDocumentText
     # At this time the only nodes gathered are those with character style named
     # 'Ruby Code', 'Ruby Value', 'Ruby Block' and 'Ruby Literal'.
     # o 'Ruby Code': simply evaluate your code without returning anything;
-    #                useful to set up your variables or define your helper 
+    #                useful to set up your variables or define your helper
     #                functions into the document context.
     # o 'Ruby Value': evaluate your code returning the result as text; this text
-    #                 *is* escaped using ERB::Util.h to avoid any clash with XML 
+    #                 *is* escaped using ERB::Util.h to avoid any clash with XML
     #                 tags into ODT document.
     # o 'Ruby Value',
     # o 'Ruby Block': evaluate your code returning the result as text; this text
     #                 *is* *not* escaped to allow tag creation into ODT document.
-    def erbify(filename)     
+    def erbify(filename)
      # First gather all the ERb-related derived styles
      # styles = {'Ruby_20_Code' => 'Code', 'Ruby_20_Value' => 'Value',
      #   'Ruby_20_Block' => 'Block', 'Ruby_20_Literal' => 'Literal'}
@@ -232,7 +232,7 @@ module Documatic::OpenDocumentText
             text = REXML::Text.unnormalize(w)
           else
             # Change OpenDocument line breaks, tabs and spaces in the ERb code to regular characters.
-            # as done by unnormalize earlier 
+            # as done by unnormalize earlier
             el.elements.each do |el|
               case el.node_type
               when :text
@@ -244,7 +244,7 @@ module Documatic::OpenDocumentText
               end
             end
           end
-          # we use a non existant entity &perc; to ease the substitution after 
+          # we use a non existant entity &perc; to ease the substitution after
           # parsing the whole document with REXML.
           erb_text = "<&perc;#{val}#{text}#{')' if val.include? '('}&perc;>"
           new_el = REXML::Element.new('text:span')
@@ -263,6 +263,7 @@ module Documatic::OpenDocumentText
       xml_doc.write(rexml_text, -1, true)
       rexml_text.gsub!('&lt;&amp;perc;', '<%')
       rexml_text.gsub!('&amp;perc;&gt;', '%>')
+      rexml_text.gsub!(/(<%=?)(.*?)(%>)/m) { "#{$1}#{CGI.unescapeHTML($2)}#{$3}" }
       return rexml_text
     end
 
