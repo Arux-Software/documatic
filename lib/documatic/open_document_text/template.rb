@@ -254,7 +254,7 @@ module Documatic::OpenDocumentText
           class_names = (el_style + el_class).join(' ')
           #new_el.add_attribute('text:class-names', class_names) if class_names != ''
           new_el.add_attribute('text:style-name', class_names) if class_names != ''
-          new_el.text=(erb_text)
+          new_el.add(REXML::CData.new(erb_text))
           el.replace_with(new_el)
           #el.replace_with(REXML::Text.new(erb_text))
         end
@@ -263,7 +263,8 @@ module Documatic::OpenDocumentText
       xml_doc.write(rexml_text, -1, true)
       rexml_text.gsub!('&lt;&amp;perc;', '<%')
       rexml_text.gsub!('&amp;perc;&gt;', '%>')
-      rexml_text.gsub!('&apos;', "'")
+      rexml_text.gsub!('<![CDATA[', '')
+      rexml_text.gsub!(']]>', '')
       return rexml_text
     end
 
