@@ -254,16 +254,17 @@ module Documatic::OpenDocumentText
           class_names = (el_style + el_class).join(' ')
           #new_el.add_attribute('text:class-names', class_names) if class_names != ''
           new_el.add_attribute('text:style-name', class_names) if class_names != ''
-          new_el.text=(erb_text)
+          new_el.add(REXML::CData.new(erb_text))
           el.replace_with(new_el)
           #el.replace_with(REXML::Text.new(erb_text))
         end
       end
       rexml_text=''
       xml_doc.write(rexml_text, -1, true)
-      rexml_text.gsub!('&lt;&amp;perc;', '<%')
-      rexml_text.gsub!('&amp;perc;&gt;', '%>')
-      rexml_text.gsub!(/(<%=?)(.*?)(%>)/m) { "#{$1}#{CGI.unescapeHTML($2)}#{$3}" }
+      rexml_text.gsub!('&lt;&amp;perc;', '<%')  # legacy escaped start
+      rexml_text.gsub!('<&perc;', '<%')       # CDATA start
+      rexml_text.gsub!('&amp;perc;&gt;', '%>') # legacy escaped end
+      rexml_text.gsub!('&perc;>', '%>')       # CDATA end
       return rexml_text
     end
 
