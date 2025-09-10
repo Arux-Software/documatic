@@ -265,7 +265,7 @@ module Documatic::OpenDocumentText
       rexml_text.gsub!('&amp;perc;&gt;', '%>')
 
       # Remove any remaining tags that were used to format the ERb code
-      rexml_text.gsub!(/<%=?(?:(?!%>).)*/, "")
+      rexml_text.gsub!("<%>", "")
 
       return rexml_text
     end
