@@ -265,6 +265,10 @@ module Documatic::OpenDocumentText
       rexml_text.gsub!(']]>', '')
       rexml_text.gsub!('<&perc;', '<%')
       rexml_text.gsub!('&perc;>', '%>')
+
+      # kill empty ERB: <%>, <% %>, <%=   %>, <%-   -%>, etc.
+      rexml_text.gsub!(/<%[-=]?\s*-?%>/, "")
+
       return rexml_text
     end
 
