@@ -23,8 +23,6 @@ module Documatic
         context = binding
       end
 
-      binding.pry
-
       begin
         @xml = nil ; @text = self.erb.result(context)
       rescue
