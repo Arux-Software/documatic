@@ -264,11 +264,6 @@ module Documatic::OpenDocumentText
       rexml_text.gsub!('&lt;&amp;perc;', '<%')
       rexml_text.gsub!('&amp;perc;&gt;', '%>')
 
-      # replace any &apos; with '
-      rexml_text.gsub!(/<%=?\s*[^%]*?%>/m) do |match|
-        match.gsub(/&apos;/, "'")
-      end
-
       return rexml_text
     end
 
