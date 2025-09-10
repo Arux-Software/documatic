@@ -213,14 +213,12 @@ module Documatic::OpenDocumentText
     # o 'Ruby Block': evaluate your code returning the result as text; this text
     #                 *is* *not* escaped to allow tag creation into ODT document.
     def erbify(filename)
-     # First gather all the ERb-related derived styles
-     # styles = {'Ruby_20_Code' => 'Code', 'Ruby_20_Value' => 'Value',
-     #   'Ruby_20_Block' => 'Block', 'Ruby_20_Literal' => 'Literal'}
-     # re_styles = /<style:style style:name="([^"]+)"[^>]* style:parent-style-name="Ruby_20_(Code|Value|Block|Literal)"[^>]*>/
+      # First gather all the ERb-related derived styles
+      # styles = {'Ruby_20_Code' => 'Code', 'Ruby_20_Value' => 'Value',
+      #   'Ruby_20_Block' => 'Block', 'Ruby_20_Literal' => 'Literal'}
+      # re_styles = /<style:style style:name="([^"]+)"[^>]* style:parent-style-name="Ruby_20_(Code|Value|Block|Literal)"[^>]*>/
       styles = {'Ruby_20_Code' => '', 'Ruby_20_Value' => '= ERB::Util.h(',
         'Ruby_20_Block' => '=', 'Ruby_20_Literal' => '='}
-
-      # binding.pry
 
       xml_doc = REXML::Document.new(self.jar.read(filename))
       styles.each_pair do |key, val|
@@ -256,17 +254,21 @@ module Documatic::OpenDocumentText
           class_names = (el_style + el_class).join(' ')
           #new_el.add_attribute('text:class-names', class_names) if class_names != ''
           new_el.add_attribute('text:style-name', class_names) if class_names != ''
-          new_el.add(REXML::CData.new(erb_text))
-          # new_el.add(REXML::Text.new(erb_text, false, nil, true))
-          # new_el.text=(erb_text)
+          new_el.text=(erb_text)
           el.replace_with(new_el)
           #el.replace_with(REXML::Text.new(erb_text))
         end
       end
       rexml_text=''
       xml_doc.write(rexml_text, -1, true)
-      rexml_text.gsub!('<&perc;', '<%')
-      rexml_text.gsub!('&perc;>', '%>')
+      rexml_text.gsub!('&lt;&amp;perc;', '<%')
+      rexml_text.gsub!('&amp;perc;&gt;', '%>')
+
+      # replace any &apos; with '
+      rexml_text.gsub!(/<%=?\s*[^%]*?%>/m) do |match|
+        match.gsub(/&apos;/, "'")
+      end
+
       return rexml_text
     end
 
