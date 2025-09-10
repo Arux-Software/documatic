@@ -11,7 +11,7 @@ module Documatic
       @erb_text = erb_text
       @erb = ERB.new(erb_text)
     end
-    
+
     # Injects the provided assigns into this component and sends it through ERB.
     def process(local_assigns)
       if local_assigns.is_a? Binding
@@ -22,6 +22,8 @@ module Documatic
         end
         context = binding
       end
+
+      binding.pry
 
       begin
         @xml = nil ; @text = self.erb.result(context)
@@ -66,13 +68,13 @@ module Documatic
         end
       end
     end
-    
+
     # to_s() is a synonym for text()
     alias_method :to_s, :text
 
 
     protected
-    
+
     # Adds methods to the singleton class representing the current
     # instance.  Useful for injecting faux local variables into an
     # instance object.
@@ -81,6 +83,6 @@ module Documatic
     def define_singleton_method(name, &body)
       (class << self ; self ; end).send(:define_method, name, &body)
     end
-    
+
   end
 end

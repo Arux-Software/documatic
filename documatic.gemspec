@@ -2,7 +2,6 @@
     s.platform    = Gem::Platform::RUBY
     s.name = 'documatic'
     s.version = '0.3.0.pre'
-    s.has_rdoc = false
     s.extra_rdoc_files = ['README', 'LICENSE']
     s.summary = 'Documatic is a template-driven formatter that can be used to produce attractive printable OpenDocument documents such as reports, invoices, letters, faxes and more.'
     s.description = s.summary

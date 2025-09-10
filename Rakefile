@@ -11,7 +11,6 @@ require 'rake/testtask'
 spec = Gem::Specification.new do |s|
   s.name = 'documatic'
   s.version = '0.3.0.pre'
-  s.has_rdoc = true
   s.extra_rdoc_files = ['README', 'LICENSE']
   s.summary = 'Documatic is an OpenDocument extension for Ruby Reports (Ruport). It is a template-driven formatter that can be used to produce attractive printable documents such as database reports, invoices, letters, faxes and more.'
   s.description = s.summary
@@ -35,7 +34,7 @@ Rake::GemPackageTask.new(spec) do |p|
   p.need_tar = true
   p.need_zip = true
 end
-                             
+
 task :default => "pkg/#{spec.name}-#{spec.version}.gem" do
     puts "generated latest version"
 end
