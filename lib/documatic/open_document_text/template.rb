@@ -246,6 +246,8 @@ module Documatic::OpenDocumentText
           end
           # we use a non existant entity &perc; to ease the substitution after
           # parsing the whole document with REXML.
+          next if text.to_s.strip == ''
+
           erb_text = "<&perc;#{val}#{text}#{')' if val.include? '('}&perc;>"
           new_el = REXML::Element.new('text:span')
           #puts "el_style ->#{el_style}<-"
@@ -263,9 +265,6 @@ module Documatic::OpenDocumentText
       xml_doc.write(rexml_text, -1, true)
       rexml_text.gsub!('&lt;&amp;perc;', '<%')
       rexml_text.gsub!('&amp;perc;&gt;', '%>')
-
-      # Remove any remaining tags that were used to format the ERb code
-      rexml_text.gsub!("<%>", "")
 
       return rexml_text
     end
