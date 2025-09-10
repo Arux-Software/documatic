@@ -220,7 +220,7 @@ module Documatic::OpenDocumentText
       styles = {'Ruby_20_Code' => '', 'Ruby_20_Value' => '= ERB::Util.h(',
         'Ruby_20_Block' => '=', 'Ruby_20_Literal' => '='}
 
-      binding.pry
+      # binding.pry
 
       xml_doc = REXML::Document.new(self.jar.read(filename))
       styles.each_pair do |key, val|
@@ -257,20 +257,16 @@ module Documatic::OpenDocumentText
           #new_el.add_attribute('text:class-names', class_names) if class_names != ''
           new_el.add_attribute('text:style-name', class_names) if class_names != ''
           new_el.add(REXML::CData.new(erb_text))
+          # new_el.add(REXML::Text.new(erb_text, false, nil, true))
+          # new_el.text=(erb_text)
           el.replace_with(new_el)
           #el.replace_with(REXML::Text.new(erb_text))
         end
       end
       rexml_text=''
       xml_doc.write(rexml_text, -1, true)
-      rexml_text.gsub!('<![CDATA[', '')
-      rexml_text.gsub!(']]>', '')
       rexml_text.gsub!('<&perc;', '<%')
       rexml_text.gsub!('&perc;>', '%>')
-
-      # kill empty ERB: <%>, <% %>, <%=   %>, <%-   -%>, etc.
-      rexml_text.gsub!(/<%[-=]?\s*-?%>/, "")
-
       return rexml_text
     end
 
