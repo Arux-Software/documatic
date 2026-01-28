@@ -246,7 +246,7 @@ module Documatic::OpenDocumentText
           end
           # we use a non existant entity &perc; to ease the substitution after 
           # parsing the whole document with REXML.
-          next if text.strip.to_s.blank?
+          next if text.to_s.strip.empty?
 
           erb_text = "<&perc;#{val}#{text}#{')' if val.include? '('}&perc;>"
           new_el = REXML::Element.new('text:span')
